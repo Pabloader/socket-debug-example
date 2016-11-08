@@ -1,0 +1,23 @@
+{
+  "name": "socket-debug-example",
+  "version": "1.0.0",
+  "description": "Example server for debugging",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pabloader/socket-debug-example.git"
+  },
+  "author": "Pabloader",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pabloader/socket-debug-example/issues"
+  },
+  "homepage": "https://github.com/pabloader/socket-debug-example",
+  "dependencies": {
+    "rand-token": "^0.2.1",
+    "socket.io": "^1.5.1"
+  }
+}
