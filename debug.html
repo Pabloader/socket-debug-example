@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="register">
+    <fieldset>
+        <legend>Register:</legend>
+        <label>Login: <input type="text" id="register_login"></label>
+        <label>Password: <input type="password" id="register_password"></label>
+        <button type="submit">Register</button>
+    </fieldset>
+</form>
+<form id="login">
+    <fieldset>
+        <legend>Login:</legend>
+        <label>Login: <input type="text" id="login_login"></label>
+        <label>Password: <input type="password" id="login_password"></label>
+        <button type="submit">Login</button>
+    </fieldset>
+</form>
+<fieldset id="messages">
+    <form id="message" style="display: none;">
+        <label>Message: <input type="text" id="message_text"></label>
+        <button type="submit">Send</button>
+    </form>
+    <legend>Messages:</legend>
+</fieldset>
+<div id="status"></div>
+<div id="token"></div>
+<script>
+    $(function () {
+        var socket = io('http://localhost:8888/');
+        socket.on('connect', () => {
+            $('#status').text('Connected');
+        });
+        socket.on('connect_error', e => {
+            $('#status').text(`Connection error: ${e}`);
+        });
+        socket.on('message', ({message, user}) => {
+            $('#messages').append(`<div><b>${user}:</b> ${message}</div>`);
+        });
+        var token;
+        $('#register').on('submit', e => {
+            e.preventDefault();
+            var login = $('#register_login').val();
+            var password = $('#register_password').val();
+            socket.emit('register', {login, password}, err => err ? alert(err) : alert('Registered'));
+        });
+        $('#login').on('submit', e => {
+            e.preventDefault();
+            var login = $('#login_login').val();
+            var password = $('#login_password').val();
+            socket.emit('login', {login, password}, (err, t) => {
+                if (err) {
+                    alert(err);
+                } else {
+                    token = t;
+                    $('#token').text(`Token: ${token}`);
+                    $('#message').show();
+                }
+            });
+        });
+        $('#message').on('submit', e => {
+            e.preventDefault();
+            var message = $('#message_text').val();
+            socket.emit('message', {message, token}, err => err && alert(err));
+        });
+    });
+</script>
+</body>
+</html>

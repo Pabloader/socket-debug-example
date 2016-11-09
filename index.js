@@ -4,18 +4,22 @@ var randToken = require('rand-token');
 var usersByLogin = {}; // Имитируем базу данных
 var usersByToken = {};
 
+var noop = function () {
+};
+
 io.on('connection', function (socket) {
     socket.on('register', function (data, callback) {
+        callback = callback || noop;
         var login = data.login;
+        var password = data.password;
         if (!login) {
             return callback('Login cannot be empty');
         }
-        if (login in usersByLogin) {
-            return callback('User already exists');
-        }
-        var password = data.password;
         if (!password) {
             return callback('Password cannot be empty');
+        }
+        if (login in usersByLogin) {
+            return callback('User already exists');
         }
         usersByLogin[login] = {
             login: login,
@@ -24,6 +28,7 @@ io.on('connection', function (socket) {
         return callback(null);
     });
     socket.on('login', function (data, callback) {
+        callback = callback || noop;
         var login = data.login;
         var password = data.password;
         if (!login) {
@@ -50,6 +55,7 @@ io.on('connection', function (socket) {
         delete usersByToken[user.token];
     });
     socket.on('message', function (data, callback) {
+        callback = callback || noop;
         var token = data.token;
         var user = usersByToken[token];
         if (!user) {
